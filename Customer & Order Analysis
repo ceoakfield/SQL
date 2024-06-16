@@ -1,0 +1,74 @@
+--In this SQL, I'm querying a database with multiple tables in it (thousands of records) to quantify statistics about customer and order data.
+/** Customer & Order Data Analytics
+C. Oakfield 06/16/24
+In this SQL, I'm querying a database (SQLLiteStudio) with multiple tables in it (thousands of records in each table) to quantify statistics about customer and order data.
+As always starting with basic queries to get to know the data and building from there.
+**/
+
+/** Basic Queries (1-3) to get to know the data
+Nice to meet you data, tell me about yourself.
+**/
+-- Q1: How many rows of data are in the customers table? 
+SELECT count(*) from customers;
+
+-- Q2: Noting some data is questionable, removing invalid/unhelpful data from query
+SELECT * 
+FROM customers
+WHERE order_id <> "Order ID" AND length(order_id) =6
+;
+-- Q3: See 5 rows of data from a month of sales for planning purposes
+SELECT * from AprSales
+LIMIT 5;
+
+-- Q4 (Question 1):  How many orders were placed in January? 
+SELECT count(*)
+FROM BIT_DB.JanSales
+WHERE length(orderID) = 6;
+
+-- Q5 (Question 2): How many of those orders were for an iPhone? 
+SELECT count(*) 
+FROM BIT_DB.JanSales
+WHERE length(orderID) = 6
+AND Product = "iPhone";
+
+-- Q6 (Question 3): Select the customer account numbers for all the orders that were placed in February
+SELECT DISTINCT cust.acctnum
+FROM BIT_DB.FebSales as feb
+LEFT JOIN customers as cust
+        ON feb.orderID = cust.order_id
+WHERE length(cust.order_id) = 6
+ORDER BY cust.acctnum
+;
+
+-- Q7 (Question 4): Which product was the cheapest one sold in January, and what was the price? 
+SELECT DISTINCT Product, Price
+FROM JanSales
+WHERE Price = (SELECT Min(Price)
+                 FROM JanSales)
+;
+
+--Q8 (Question 5): What is the total revenue for each product sold in January? 
+SELECT Jan.Product, ROUND(SUM(Jan.price* Jan.Quantity), 2) TotalRevenue
+FROM BIT_DB.JanSales Jan
+WHERE Jan.Product <> 'Product' AND Jan.Product <> ""
+GROUP BY Jan. Product
+ORDER BY TotalRevenue ASC
+;
+
+
+--Q9 (Question 6): Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
+
+SELECT Product, Quantity, Quantity * Price TotalRevenue 
+FROM BIT_DB.FebSales
+WHERE location LIKE "548 Lincoln%";
+
+
+--Q10 (Question 7): How many customers ordered more than 2 products (can be the same product) AT A TIME in February, and what was the average amount spent for those customers?
+SELECT count(DISTINCT Cust.acctnum) NumProducts, Round(Avg(Quantity *Price),2) Avg
+FROM BIT_DB.FebSales Feb
+LEFT JOIN BIT_DB.customers Cust
+        ON Feb.orderID = Cust.order_ID
+WHERE length(Feb.orderID) = 6 
+AND Feb.Quantity>2
+
+/** END - Have a nice day! Thanks for viewing.  **/ 
