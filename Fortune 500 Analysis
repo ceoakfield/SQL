@@ -1,4 +1,4 @@
--- This analysis is used for the following Fortune 500 dataset:
+-- This project reveals insights about the following Fortune 500 dataset. 
 
 CREATE TABLE fortune_companies (
     company_id INTEGER PRIMARY KEY,
@@ -60,27 +60,27 @@ VALUES
 
 /** Fortune 500 Analysis 
 C. Oakfield 6/9/2024
+6/16/24: Updated comments to reflect my own style of documentation
 Querying basic HR data on a Fortune Company Dataset
-Always starting with the basic and then building
+Always starting with the basic and then building 
+Fun Fact: You've got this!
 **/
 
--- Select 5 rows for a quick view of data contained in the table
-SELECT * 
-FROM fortune_companies
-LIMIT 5;
+/** Basic Queries (1-2) to get to know the data 
+Nice to meet you data, tell me about yourself. 
+**/
 
--- How many total companies are in the data set? 
-SELECT count(*)
-from fortune_companies;
+SELECT * FROM fortune_companies LIMIT 5;
+SELECT count(*) from fortune_companies;
 
--- How many companies are under each industry in the data set and sort asc
+-- Q3: How many companies are under each industry in the data set and sort asc
 SELECT industry, count (*) Number
 from fortune_companies
 GROUP by industry
 ORDER BY Number asc 
 ;
 
--- Show the industries that have more than 5 companies
+-- Q4: Show the industries that have more than 5 companies
 SELECT industry, count (*) Number
 from fortune_companies
 GROUP by industry
@@ -88,7 +88,7 @@ HAVING Number >5
 ORDER BY Number asc 
 ;
 
-/** Display the company name & industry for all companies that have healthcare benefits and paid time off more than 15 days OR Healthcare benefits and over 10 weeks of maternity leave **/
+/** Q5: Display the company name & industry for all companies that have healthcare benefits and paid time off more than 15 days OR Healthcare benefits and over 10 weeks of maternity leave **/
 SELECT company_name, industry, paid_time_off_days PTO, maternity_leave_weeks maternity_wks
 FROM fortune_companies
 WHERE (healthcare_benefits =1 AND paid_time_off_days > 15) OR (healthcare_benefits =1 AND maternity_leave_weeks > 10)
@@ -96,24 +96,25 @@ ORDER BY paid_time_off_days desc
 ;
 
 
--- Find the Max PTO, Maternity and Tenure for companies that OFFER healthcare benefits -
+-- Q6: Find the Max PTO, Maternity and Tenure for companies that OFFER healthcare benefits 
 SELECT Max(paid_time_off_days) MaxPTO, max(maternity_leave_weeks) MaxMaternity, Max (avg_employee_tenure) MaxTenure
 FROM fortune_companies
 WHERE healthcare_benefits =1
 ;
 
--- Find the Max PTO, Maternity and Tenure for companies that DO NOT OFFER health care benefits -
+-- Q7: Find the Max PTO, Maternity and Tenure for companies that DO NOT OFFER health care benefits -
 SELECT Max(paid_time_off_days) MaxPTO, max(maternity_leave_weeks) MaxMaternity, Max (avg_employee_tenure) MaxTenure
 FROM fortune_companies
 WHERE healthcare_benefits =0;
 
--- What is the Avg Tenure of all companies?
+-- Q8: What is the Avg Tenure of all companies?
 SELECT ROUND(Avg(avg_employee_tenure)) AvgTenure
 FROM fortune_companies
 ;
 
--- Create a basic review system on the benefit offerings
--- used two industries to limit results while building query for a sample rating system 
+/** Q9: Create a basic review system on the benefit offerings
+used two industries to limit results while building query for a sample rating system **/
+
 SELECT company_name, 
 
 	CASE WHEN (healthcare_benefits =0 AND (paid_time_off_days + maternity_leave_weeks >=30)) THEN 'While there are no health benefits this company offers genergous PTO maternity leave.' 
@@ -133,7 +134,7 @@ FROM fortune_companies
 
 ORDER BY PTODays desc;
 
--- Display the average # of employees and average revenue based on industry
+-- Q10: Display the average # of employees and average revenue based on industry
 
 SELECT industry Industry, COUNT(*) Number, ROUND(AVG(employees)) AvgEmployees, ROUND(AVG(revenue), 2) AvgRevenue
 --Used CamelCase for column labels to pretty things up
@@ -141,5 +142,7 @@ SELECT industry Industry, COUNT(*) Number, ROUND(AVG(employees)) AvgEmployees, R
 FROM fortune_companies
 GROUP BY industry
 ORDER BY Number DESC;
+
+/** END **/ 
 
 
