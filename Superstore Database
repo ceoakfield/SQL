@@ -1,4 +1,4 @@
--- This project utilizes the following Superstore data: 
+--- This project reveals insights about the following Superstore dataset. 
 CREATE TABLE superstore (
     item_id INTEGER PRIMARY KEY,
     item_name TEXT,
@@ -26,41 +26,50 @@ VALUES
     (14, 'Cutlery Set', 'Kitchen Supplies', 34.50, 40, 4.4),
     (15, 'Cozy Throw Blanket', 'Furnishings', 24.99, 100, 4.2);
 
-/** Superstore Database Project
- Using SQL to query the Superstore database - aggregates included. Retrieving information about inventory that will assist with stocking and future decisions.
+/** Superstore Analysis Project
+ C.Oakfield Jun-2024
+ 6/16/24: Updated comments to reflect my own style of documentation
+ Using SQL to query the Superstore database - aggregates included. 
+ Retrieving information about inventory that will assist with stocking and future decisions.
  C.Oakfield Jun-2024 **/
 
--- Select first 5 rows of data for general planning of queries
-SELECT *
-FROM superstore
-LIMIT 5;
+/** Basic Queries (1-2) to get to know the data 
+Always starting with the basic and then building 
+Nice to meet you data, tell me about yourself. 
+Fun Fact for the day: According to the TIOBE Index, SQL is the ninth most popular programming language around in 2024
+**/
 
--- Order items by price
+-- Q1: Select first 5 rows of data for general planning of queries
+SELECT * FROM superstore LIMIT 5;
+
+-- Q2: Order items by price descending
 SELECT item_name, category, price
 FROM superstore
 ORDER BY price DESC;
 
--- Quick query of superstore status using aggregates
+-- Q3: Quick query of superstore status using aggregates
 SELECT max (price) MaxPrice, min (price) MinPrice, avg (price) AvgPrice, avg (average_rating) AvgRating, count (item_name) TotalItems, sum(stock_quantity) InventoryTotalPieces, sum(price) CurrentInventoryValue
 FROM superstore;
 
--- Take a look at the avg/min/max of the ratings in the kitchen supply category to consider value of category
+-- Q4: Take a look at the avg/min/max of the ratings in the kitchen supply category to consider value of category
 SELECT avg(average_rating) AvgRating, min(average_rating) MinRating, max (average_rating) MaxRating, count(average_rating) TotalRatings
 FROM superstore
 WHERE category = "Kitchen Supplies";
 
--- Select items with less than 50 in inventory
+-- Q5: Select items with less than 50 in inventory
 SELECT item_name, stock_quantity
 FROM superstore
 WHERE stock_quantity <50
 ORDER BY stock_quantity ASC;
 
--- How many stocked items are in each category
+-- Q6: How many stocked items are in each category
 SELECT category, count(category), avg(average_rating)
 FROM superstore
 GROUP BY category;
 
--- How many Security Cameras are in stock
+-- Q7: How many Security Cameras are in stock
 SELECT item_name, stock_quantity
 FROM superstore
 WHERE item_name = 'Smart Home Security Camera';
+
+/** END **/
