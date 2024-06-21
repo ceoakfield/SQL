@@ -1,0 +1,75 @@
+/** 
+C. Oakfield 6/20/24
+This project contains a portion of downloaded Spotify data from Kaggle. 
+I created a table to insert the Spotify data into from a .csv file
+Finally, I performed some analytics on the data.  **/
+
+-- Create Table
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+song_key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+song_mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness decimal(8,7) NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL );
+
+-- Q1: Query table to get to know the data
+
+
+SELECT * FROM Spotifydata;
+
+-- Q2 What is the average danceability by artist Group by artist, View Danceability as a percentage rounding to two digits and order descending
+
+SELECT artist_name, ROUND((avg(danceability) * 100), 2) DanceabilityPercentage
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY Danceability DESC
+;
+
+-- Q3 What is the shortest song and who released it? 
+SELECT artist_name, track_name
+FROM BIT_DB.Spotifydata
+WHERE duration_ms = (select min(duration_ms)
+                    FROM BIT_DB.Spotifydata
+                    )
+ORDER BY duration_ms ASC
+;
+
+-- Q4 What is the longest song and who released it? 
+
+SELECT artist_name, track_name
+FROM BIT_DB.Spotifydata
+WHERE duration_ms = (select max(duration_ms)
+                    FROM BIT_DB.Spotifydata
+                    )
+ORDER BY duration_ms ASC
+;
+
+-- Q5 What is the average length of all of the songs, rounded to two digits after the decimal
+
+SELECT ROUND(((AVG(duration_ms)/1000)/60), 2) AvgDuration
+FROM BIT_DB.Spotifydata
+;
+--Note: rounds to a final zero and that digit is left off.
+
+-- Q6 What are the top 5 most popular high energy songs?
+
+SELECT artist_name, track_name, popularity, energy
+FROM BIT_DB.Spotifydata
+WHERE energy >.7 
+ORDER BY popularity DESC
+LIMIT 5;
+
+/** END **/
