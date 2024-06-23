@@ -98,9 +98,10 @@ WHERE T1.title = 'Sales Support Agent'
 
 -- Q27: What were the total sales in 2009? 
 
-SELECT SUM(Total) TotalSales2009
+SELECT ROUND(SUM(Total),2) TotalSales2009
 FROM chinook.invoices
 WHERE InvoiceDate Like '2009%'
+;
 
 --Q28: Show all Tracks, Album name, media type and genre.
 
@@ -131,7 +132,8 @@ JOIN chinook.tracks t
 JOIN chinook.invoice_items ii
     ON t.TrackId = ii.TrackId
 GROUP BY ArtistName
-ORDER BY Total DESC;
+ORDER BY Total DESC
+;
 
 -- Q30: Which customer has spent the most money with us?
 
