@@ -1,0 +1,151 @@
+/**C. Oakfield 6/22/24
+This project worked with a dataset called chinook, which represents a digital media store and includes tables for customers, invoices, artists, albums, tracks and more: 11 tables in total. 
+Upon importing the dataset, I reviewed the: contents, database relationship diagram, and then queried the data  **/
+
+/** Basic Queries (1-22) to get to know the data:Nice to meet you data, tell me about yourself.
+Viewed 10 rows in each table and counted rows in each table.
+**/
+    SELECT * FROM chinook.employees LIMIT 10;
+    SELECT count(FirstName) FROM chinook.employees;
+    -- 8 rows of data
+    
+    SELECT * FROM chinook.customers LIMIT 10;
+    SELECT count(FirstName) FROM chinook.customers;
+    -- 59 rows of data
+    
+    SELECT * FROM chinook.invoices LIMIT 10;
+    SELECT count(InvoiceId) FROM chinook.invoices;
+    -- 412 rows of data
+    
+    SELECT * FROM chinook.invoice_items LIMIT 10;
+    SELECT count(InvoiceId) FROM chinook.invoice_items;
+    -- 2,240 rows of data
+        
+    SELECT * FROM chinook.tracks LIMIT 10;
+    SELECT count(TrackID) FROM chinook.tracks;
+    -- 3,503 rows of data
+    
+    SELECT * FROM chinook.albums LIMIT 10;
+    SELECT count(AlbumId) FROM chinook.albums;
+    -- 347 rows of data
+    
+    SELECT * FROM chinook.artists LIMIT 10;
+    SELECT count(ArtistId) FROM chinook.artists;
+    -- 275 rows of data
+    
+    SELECT * FROM chinook.playlist_track LIMIT 10;
+    SELECT count(PlaylistId) FROM chinook.playlist_track;
+    -- 8,715 rows of data
+    
+    SELECT * FROM chinook.playlists LIMIT 10;
+    SELECT count(PlaylistId) FROM chinook.playlists;
+    -- 18 rows of data
+    
+    SELECT * FROM chinook.genres LIMIT 10;
+    SELECT count(GenreId) FROM chinook.genres;
+    -- 25 rows of data
+    
+    SELECT * FROM chinook.media_types LIMIT 10;
+    SELECT count(MediaTypeId) FROM chinook.media_types;
+    -- 5 rows of data
+    
+-- Q23: Provide a list of Customers that have purchased from us (all time) that live outside of the USA.Order by Country ASC
+
+SELECT DISTINCT C.FirstName, C.LastName, C.Company, C.Country 
+--, C.SupportRepId, I.InvoiceDate, I.InvoiceID    (<- used briefly to confirm data)
+FROM
+chinook.customers C
+INNER JOIN chinook.invoices I
+ON  C.CustomerId = I.CustomerId
+WHERE C.Country <> 'USA'
+Order by C.Country ASC
+;
+
+-- Q24: I want to know where the majority of our clients are located. Please provide a list of all countries where we have more than one client, list it descending so the country with the most clients is at the top. 
+
+SELECT Country, Count(FirstName) Count
+FROM chinook.customers
+GROUP BY Country
+HAVING Count > 1
+ORDER BY Count DESC
+;
+
+-- Q25: How many employees are sales agents? Provide me with first name, last name, hire date and their email address.
+
+SELECT FirstName
+    , LastName
+    , HireDate
+    , EMail 
+FROM chinook.employees
+WHERE title = 'Sales Support Agent'
+;
+
+--Q26: The same query as above but I would like to know who their supervisor is. Thanks!
+
+SELECT T1.FirstName
+    , T1.LastName
+    , T1.HireDate
+    , T1.EMail 
+    , T1.ReportsTo
+    , T2.LastName SupervisorFirstName
+    , T2.FirstName SupervisorLastName
+    , T2.Title SupervisorTitle
+FROM chinook.employees T1
+INNER JOIN chinook.employees T2
+ON T1.ReportsTo = T2.EmployeeID
+WHERE T1.title = 'Sales Support Agent'
+;
+
+-- Q27: What were the total sales in 2009? 
+
+SELECT SUM(Total) TotalSales2009
+FROM chinook.invoices
+WHERE InvoiceDate Like '2009%'
+
+--Q28: Show all Tracks, Album name, media type and genre.
+
+SELECT t.name as TrackName
+, a.Title AlbumTitle
+, m.Name MediaType
+, g.Name Genre
+FROM chinook.tracks t
+JOIN chinook.albums a
+    ON t.AlbumID = a.AlbumID
+JOIN chinook.media_types m
+    ON t.MediaTypeId = m.MediaTypeId
+JOIN chinook.genres g
+    ON t.GenreId = g.GenreID
+ORDER BY AlbumTitle ASC
+;
+
+-- Q29: Which artist generated the most revenue on invoices. Show me all totals, starting with the highest amount, descending.
+
+SELECT 
+a.Name ArtistName
+, ROUND(SUM(ii.UnitPrice * ii.Quantity), 2) Total
+FROM chinook.artists a
+JOIN chinook.albums  l  
+    ON a.ArtistId = l.ArtistId
+JOIN chinook.tracks t
+    ON l.AlbumID = t.AlbumID
+JOIN chinook.invoice_items ii
+    ON t.TrackId = ii.TrackId
+GROUP BY ArtistName
+ORDER BY Total DESC;
+
+-- Q30: Which customer has spent the most money with us?
+
+SELECT c.FirstName
+, c.LastName
+, SUM(i.Total) TotalSpent
+FROM chinook.customers c
+JOIN chinook.invoices i
+    ON c.CustomerID = i.CustomerID
+GROUP BY c.FirstName, c.LastName
+ORDER BY TotalSpent DESC
+;
+
+/** END **/
+  
+
+
